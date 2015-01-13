@@ -1,0 +1,27 @@
+---
+- include: setup-redhat.yml
+  when: ansible_os_family == 'RedHat'
+- include: setup-debian.yml
+  when: ansible_os_family == 'Debian'
+- include: setup-archlinux.yml
+  when: ansible_os_family == 'Archlinux'
+
+- name: Update /etc/default/sslh
+  copy:
+    src: default-sslh
+    dest: /etc/default/sslh
+    owner: root
+    group: root
+    mode: 644
+    backup: yes
+  
+- name: Configured
+  template:
+    src: sslh.cfg.j2
+    dest: /etc/sslh.cfg
+    owner: sslh
+    group: sslh
+    mode: 644
+  notify: reload sslh
+  tags:
+    sslh
